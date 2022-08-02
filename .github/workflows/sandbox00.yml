@@ -1,4 +1,4 @@
-name: production deploy
+name: sandbox00
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: check authority
         id: deploy_check
-        if: ${{ !contains(env.DEPLOY_USERS, github.actor) }}
+        if: ${{ 'a' == 'a' }}
         run: |
           echo 'checking deploy user'
           exit 1
