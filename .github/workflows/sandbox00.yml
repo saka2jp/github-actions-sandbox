@@ -1,0 +1,50 @@
+name: production deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'デプロイをするには、"production"を入力してください'
+        required: true
+        default: ''
+
+jobs:
+  deploy_user_check:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.deploy_check.outcome }}
+    steps:
+      - name: check authority
+        id: deploy_check
+        if: ${{ contains(env.DEPLOY_USERS, github.actor) }}
+        run: |
+          echo 'checking deploy user'
+          exit 1
+    env:
+      DEPLOY_USERS: ${{ secrets.DEPLOY_USERS }}
+
+  inputs_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check inputs
+        if: github.event.inputs.confirm == 'production'
+        run: |
+          echo 'デプロイをするには、"production"を入力してください'
+          exit 1
+
+  tag_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check tag
+        if: startsWith(github.ref_name, 'v')
+        run: |
+          echo 'デプロイをするには、"v"から始まるタグを指定してください'
+          exit 1
+
+  prod-deploy:
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    needs: [deploy_user_check, inputs_check, tag_check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: echo 'success'
