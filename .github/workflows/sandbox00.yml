@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: check authority
         id: deploy_check
-        if: ${{ 'a' != 'a' }}
+        if: ${{ !contains(env.DEPLOY_USERS, github.actor) }}
         run: |
           echo 'checking deploy user'
           exit 1
@@ -42,7 +42,6 @@ jobs:
           exit 1
 
   prod-deploy:
-    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     needs: [deploy_user_check, inputs_check, tag_check]
     runs-on: ubuntu-latest
     steps:
