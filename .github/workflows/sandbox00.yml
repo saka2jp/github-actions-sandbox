@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: check authority
         id: deploy_check
-        if: ${{ contains(env.DEPLOY_USERS, github.actor) }}
+        if: ${{ !contains(env.DEPLOY_USERS, github.actor) }}
         run: |
           echo 'checking deploy user'
           exit 1
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check inputs
-        if: ${{ github.event.inputs.confirm == 'production' }}
+        if: ${{ github.event.inputs.confirm != 'production' }}
         run: |
           echo 'デプロイをするには、"production"を入力してください'
           exit 1
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check tag
-        if: ${{ startsWith(github.ref_name, 'v') }}
+        if: ${{ !startsWith(github.ref_name, 'v') }}
         run: |
           echo 'デプロイをするには、"v"から始まるタグを指定してください'
           exit 1
