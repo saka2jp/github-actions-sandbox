@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: check authority
         id: deploy_check
-        if: ${{ 'a' == 'a' }}
+        if: ${{ 'a' != 'a' }}
         run: |
           echo 'checking deploy user'
           exit 1
